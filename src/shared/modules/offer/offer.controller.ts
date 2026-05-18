@@ -1,5 +1,5 @@
 import { inject, injectable } from 'inversify';
-import { BaseController, HttpError, HttpMethod, ValidateDtoMiddleware, ValidateObjectIdMiddleware } from '../../libs/rest/index.js';
+import { BaseController, DocumentExistsMiddleware, HttpError, HttpMethod, ValidateDtoMiddleware, ValidateObjectIdMiddleware } from '../../libs/rest/index.js';
 import { Component } from '../../types/component.enum.js';
 import { Logger } from '../../libs/logger/logger.interface.js';
 import { Request, Response } from 'express';
@@ -10,10 +10,9 @@ import { fillDTO, getUserId } from '../../helpers/common.js';
 import { OfferRdo } from './rdo/offer.rdo.js';
 import { prepareOffer } from '../../helpers/offer.js';
 import { CreateOfferDto } from './dto/create-offer.dto.js';
-import { UpdateOfferDto } from './dto/update-offer.dto.js';
 import { StatusCodes } from 'http-status-codes';
-import { OfferIdParam } from './types/offerId.type.js';
-import { OfferCityParam } from './types/offerCity.type.js';
+import { OfferIdParam } from './types/params-offerid.type.js';
+import { OfferCityParam } from './types/params-offerCity.type.js';
 import { CreateOfferRequest } from './types/create-offer-request.type.js';
 import { UpdateOfferRequest } from './types/update-offer-request.type.js';
 
@@ -32,11 +31,46 @@ export class OfferController extends BaseController {
     this.addRoute({path: '/', method: HttpMethod.Post, handler: this.create, middlewares: [new ValidateDtoMiddleware(CreateOfferDto)]});
     this.addRoute({path: '/favorites', method: HttpMethod.Get, handler: this.getFavorites});
     this.addRoute({path: '/premium/:city', method: HttpMethod.Get, handler: this.getPremium});
-    this.addRoute({path: '/:offerId', method: HttpMethod.Patch, handler: this.update, middlewares: [new ValidateObjectIdMiddleware('offerId')]});
-    this.addRoute({path: '/:offerId', method: HttpMethod.Delete, handler: this.delete, middlewares: [new ValidateObjectIdMiddleware('offerId')]});
-    this.addRoute({path: '/:offerId', method: HttpMethod.Get, handler: this.show, middlewares: [new ValidateObjectIdMiddleware('offerId')]});
-    this.addRoute({path: '/:offerId/favorite', method: HttpMethod.Post, handler: this.addToFavorite, middlewares: [new ValidateObjectIdMiddleware('offerId')]});
-    this.addRoute({path: '/:offerId/favorite', method: HttpMethod.Delete, handler: this.deleteFromFavorite, middlewares: [new ValidateObjectIdMiddleware('offerId')]});
+    this.addRoute({
+      path: '/:offerId',
+      method: HttpMethod.Patch,
+      handler: this.update,
+      middlewares: [
+        new ValidateObjectIdMiddleware('offerId'),
+        new DocumentExistsMiddleware(this.offerService, 'Offer', 'offerId')
+      ]});
+    this.addRoute({
+      path: '/:offerId',
+      method: HttpMethod.Delete,
+      handler: this.delete,
+      middlewares: [
+        new ValidateObjectIdMiddleware('offerId'),
+        new DocumentExistsMiddleware(this.offerService, 'Offer', 'offerId')
+      ]});
+    this.addRoute({
+      path: '/:offerId',
+      method: HttpMethod.Get,
+      handler: this.show,
+      middlewares: [
+        new ValidateObjectIdMiddleware('offerId'),
+        new DocumentExistsMiddleware(this.offerService, 'Offer', 'offerId')
+      ]});
+    this.addRoute({
+      path: '/:offerId/favorite',
+      method: HttpMethod.Post,
+      handler: this.addToFavorite,
+      middlewares: [
+        new ValidateObjectIdMiddleware('offerId'),
+        new DocumentExistsMiddleware(this.offerService, 'Offer', 'offerId')
+      ]});
+    this.addRoute({
+      path: '/:offerId/favorite',
+      method: HttpMethod.Delete,
+      handler: this.deleteFromFavorite,
+      middlewares: [
+        new ValidateObjectIdMiddleware('offerId'),
+        new DocumentExistsMiddleware(this.offerService, 'Offer', 'offerId')
+      ]});
   }
 
   private getValidLimit(limit?: number): number | undefined {
@@ -74,22 +108,13 @@ export class OfferController extends BaseController {
   public async update({body, params}: UpdateOfferRequest, res: Response): Promise<void> {
     const typedParams = params as OfferIdParam;
     const offerId = this.extractParam(typedParams.offerId, 'offerId');
-    const existOffer = await this.offerService.findById(offerId);
-
-    if (!existOffer) {
-      throw new HttpError(
-        StatusCodes.NOT_FOUND,
-        `Offer with id: ${offerId} mot found`,
-        'OfferController'
-      );
-    }
 
     const result = await this.offerService.updateById(offerId, body);
 
     if (!result) {
       throw new HttpError(
         StatusCodes.NOT_FOUND,
-        `Offer with id: ${offerId} mot found`,
+        `Offer with id: ${offerId} not found`,
         'OfferController'
       );
     }
@@ -101,15 +126,6 @@ export class OfferController extends BaseController {
   public async delete(req: Request, res: Response): Promise<void> {
     const params = req.params as OfferIdParam;
     const offerId = this.extractParam(params.offerId, 'offerId');
-    const existOffer = await this.offerService.findById(offerId);
-
-    if (!existOffer) {
-      throw new HttpError(
-        StatusCodes.NOT_FOUND,
-        `Offer with id: ${offerId} mot found`,
-        'OfferController'
-      );
-    }
 
     await this.offerService.deleteById(offerId);
     await this.commentService.deleteByOfferId(offerId);
@@ -126,7 +142,7 @@ export class OfferController extends BaseController {
     if (!existOffer) {
       throw new HttpError(
         StatusCodes.NOT_FOUND,
-        `Offer with id: ${offerId} mot found`,
+        `Offer with id: ${offerId} not found`,
         'OfferController'
       );
     }
@@ -146,15 +162,6 @@ export class OfferController extends BaseController {
     const params = req.params as OfferIdParam;
     const offerId = this.extractParam(params.offerId, 'offerId');
     const userId = getUserId(req.headers, 'OfferController');
-    const existOffer = await this.offerService.exists(offerId);
-
-    if (!existOffer) {
-      throw new HttpError(
-        StatusCodes.NOT_FOUND,
-        `Offer with id: ${offerId} mot found`,
-        'OfferController'
-      );
-    }
 
     await this.offerService.addToFavorite(offerId, userId);
     const result = await this.offerService.findById(offerId);
@@ -162,7 +169,7 @@ export class OfferController extends BaseController {
     if (!result) {
       throw new HttpError(
         StatusCodes.NOT_FOUND,
-        `Offer with id: ${offerId} mot found`,
+        `Offer with id: ${offerId} not found`,
         'OfferController'
       );
     }
@@ -175,15 +182,6 @@ export class OfferController extends BaseController {
     const params = req.params as OfferIdParam;
     const offerId = this.extractParam(params.offerId, 'offerId');
     const userId = getUserId(req.headers, 'OfferController');
-    const existOffer = await this.offerService.exists(offerId);
-
-    if (!existOffer) {
-      throw new HttpError(
-        StatusCodes.NOT_FOUND,
-        `Offer with id: ${offerId} not found`,
-        'OfferController'
-      );
-    }
 
     await this.offerService.deleteFromFavorite(offerId, userId);
     const result = await this.offerService.findById(offerId);

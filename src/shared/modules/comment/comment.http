@@ -1,16 +1,16 @@
 #Комментарии
 ## Получить комментарии по предложению
-GET http://localhost:4000/offers/67f3a907c8d9e0f1a2b3c4d5/comments HTTP/1.1
+GET http://localhost:4000/offers/6a0b0f00071213db1b2094c9/comments HTTP/1.1
 
 ###
 
 ## Добавить комментарий к предложению
-POST http://localhost:4000/offers/67f3a907c8d9e0f1a2b3c4d5/comments HTTP/1.1
+POST http://localhost:4000/offers/6a0b0f00071213db1b2094c9/comments HTTP/1.1
 Content-Type: application/json
 x-user-id: 67f3a907c8d9e0f1a2b3c4d5
 
 {
-  "text": "Удобное расположение, близко к ТЦ",
+  "text": "Отличное место!",
   "rating": 5
 }
 

@@ -53,10 +53,7 @@ export class ImportCommand implements Command{
     );
   }
 
-  public async execute(
-    fileName: string,
-    ...params: string[]
-  ): Promise<void> {
+  public async execute(fileName: string, ...params: string[]): Promise<void> {
     const { uri, salt } = this.buildMongoURI(params);
 
     this.salt = salt;
