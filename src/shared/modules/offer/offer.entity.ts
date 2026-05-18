@@ -122,7 +122,7 @@ export class OfferEntity extends defaultClasses.TimeStamps {
     _id: false,
     type: () => LocationsSchema
   })
-  public coordinates!: LocationsSchema;
+  public location!: LocationsSchema;
 
   @prop({
     ref: 'UserEntity',

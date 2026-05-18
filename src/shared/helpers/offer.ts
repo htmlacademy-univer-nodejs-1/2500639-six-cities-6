@@ -10,7 +10,7 @@ export function createOffer(offerData: string): Offer{
     authorName, authorEmail, authorAvatarPath, authorPassword, authorType, commentsCount, location
   ] = offerData.replace('\n', '').split('\t');
 
-  const offerLocation = {
+  const Offerlocation = {
     latitude: Number.parseFloat(location.split(',')[0]),
     longitude: Number.parseFloat(location.split(',')[1])
   };
@@ -33,14 +33,14 @@ export function createOffer(offerData: string): Offer{
     isPremium: isPremium === 'true',
     isFavourites: isFavorite === 'true',
     rating: Number.parseFloat(rating),
-    type: OfferType[type as keyof typeof OfferType],
+    type: OfferType[type.toLowerCase() as keyof typeof OfferType],
     countRoom: Number.parseInt(countRoom, 10),
     countGuest: Number.parseInt(countGuest, 10),
     rentalPrice: Number.parseInt(rentalPrice, 10),
     conveniences: conveniences.split(',').map((convenience) => Conveniences[convenience as keyof typeof Conveniences]),
     author,
     commentCount: Number.parseInt(commentsCount, 10),
-    location: offerLocation
+    location: Offerlocation
   };
 }
 

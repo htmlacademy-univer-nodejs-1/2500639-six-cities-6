@@ -28,7 +28,7 @@ Content-Type: application/json
   ],
   "authorId": "62711a50b0e24a624d49ffdc",
   "commentCount": 0,
-  "coordinates": {
+  "location": {
     "latitude": 50.938361,
     "longitude": 6.959974
   }
@@ -62,7 +62,7 @@ Content-Type: application/json
   ],
   "isPremium": false,
   "isFavourites": false,
-  "rating": 4.5,
+  "rating": 5,
   "type": "Apartment",
   "countRoom": 5,
   "countGuest": 7,
@@ -72,7 +72,7 @@ Content-Type: application/json
     "Towels"
   ],
   "commentCount": 0,
-  "coordinates": {
+  "location": {
     "latitude": 50.938361,
     "longitude": 6.959974
   }
@@ -91,7 +91,7 @@ GET http://localhost:4000/offers/favorites HTTP/1.1
 ###
 
 ## Добавить предложение в избанное
-POST http://localhost:4000/offers/69f49a799341051032fbb95f/favorite HTTP/1.1
+POST http://localhost:4000/offers/69f49dcf0668e702839d7851/favorite HTTP/1.1
 
 ###
 

@@ -117,6 +117,38 @@ paths:
         "401":
           description: Пользователь не авторизован
 
+  /users/{userId}/avatar:
+    parameters:
+      - $ref: "#/components/parameters/userId"
+    post:
+      tags:
+        - users
+      summary: Загрузка аватара пользователя
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required: [avatar]
+              properties:
+                avatar:
+                  type: string
+                  format: binary
+      responses:
+        "200":
+          description: Аватар успешно загружен
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/userRead"
+        "400":
+          description: Некорректный id пользователя или невалидный файл
+        "404":
+          description: Пользователь не найден
+
 
   # Предложения
   /offers:
@@ -414,6 +446,14 @@ components:
       required: true
       schema:
         $ref: '#components/schemas/cityName'
+
+    userId:
+      name: userId
+      in: path
+      required: true
+      schema:
+        type: string
+      description: Id пользователя
 
 
   schemas:
