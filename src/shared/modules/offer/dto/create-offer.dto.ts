@@ -1,4 +1,4 @@
-import { ArrayMaxSize, ArrayMinSize, IsArray, IsBoolean, IsDateString, IsEnum, IsInt, IsMongoId, IsNumber, IsString, Max, MaxLength, Min, MinLength, ValidateNested } from 'class-validator';
+import { ArrayMaxSize, ArrayMinSize, IsArray, IsBoolean, IsDateString, IsEnum, IsInt, IsNumber, IsString, Max, MaxLength, Min, MinLength, ValidateNested } from 'class-validator';
 import { CityName, Conveniences, Location, OfferType } from '../../../types/index.js';
 import { OfferValidationMessage } from './create-offer.messages.js';
 import { Type } from 'class-transformer';
@@ -34,9 +34,6 @@ export class CreateOfferDto {
   @IsBoolean({message: OfferValidationMessage.isPremium.invalidFormat})
   public isPremium!: boolean;
 
-  @IsBoolean({message: OfferValidationMessage.isFavourites.invalidFormat})
-  public isFavourites!: boolean;
-
   @IsNumber({}, {message:  OfferValidationMessage.rating.invalidFormat})
   @Min(1, {message: OfferValidationMessage.rating.rangeField})
   @Max(5, {message: OfferValidationMessage.rating.rangeField})
@@ -65,12 +62,11 @@ export class CreateOfferDto {
   @ArrayMinSize(1, {message: OfferValidationMessage.conveniences.invalidFormat})
   public conveniences!: Conveniences[];
 
-  @IsMongoId({message: OfferValidationMessage.authorId.invalidId})
-  public authorId!: string;
+  public authorId: string;
 
   @IsInt({message: OfferValidationMessage.commentCount.invalidFormat})
   @Min(0, {message: OfferValidationMessage.commentCount.invalidFormat})
-  public commentCount!: number;
+  public commentCount: number;
 
   @ValidateNested({message:OfferValidationMessage.location.invalidFormat})
   @Type(() => LocationDto)

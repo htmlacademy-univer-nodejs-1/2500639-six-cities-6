@@ -58,3 +58,28 @@ export function prepareOffer(offer: DocumentType<OfferEntity>) {
     }
   };
 }
+
+export function extractRefId(entity: unknown): string {
+  if (typeof entity === 'string') {
+    return entity;
+  }
+
+  if (typeof entity === 'object' && entity !== null && '_id' in entity) {
+    return String((entity as { _id: unknown })._id);
+  }
+
+  return String(entity);
+}
+
+export function mapOffer(offer: DocumentType<OfferEntity>, userId?: string) {
+  const preparedOffer = prepareOffer(offer);
+  const favoriteByUsers = offer.favoriteByUsers ?? [];
+  const isFavorite = userId
+    ? favoriteByUsers.some((favoriteUser) => extractRefId(favoriteUser) === userId)
+    : false;
+
+  return {
+    ...preparedOffer,
+    isFavorite
+  };
+}

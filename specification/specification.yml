@@ -79,7 +79,7 @@ paths:
           description: Неверный логин или пароль
 
 
-  /users/checkAuth:
+  /users/profile:
     get:
       tags:
         - users

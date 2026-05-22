@@ -1,13 +1,15 @@
 import { inject, injectable } from 'inversify';
-import { BaseController, DocumentExistsMiddleware, HttpMethod, ValidateObjectIdMiddleware } from '../../libs/rest/index.js';
+import { BaseController, DocumentExistsMiddleware, HttpError, HttpMethod, ValidateDtoMiddleware, ValidateObjectIdMiddleware } from '../../libs/rest/index.js';
 import { Component } from '../../types/component.enum.js';
 import { Logger } from '../../libs/logger/logger.interface.js';
-import { CommentRdo, CommentService } from './index.js';
+import { CommentRdo, CommentService, CreateCommentDto } from './index.js';
 import { OfferService } from '../offer/offer-service.interface.js';
 import { Response } from 'express';
 import { CreateCommentRequest } from './types/create-comment-request.type.js';
 import { OfferIdParam } from '../offer/types/params-offerid.type.js';
 import { fillDTO, getUserId } from '../../helpers/common.js';
+import { PrivateRouteMiddleware } from '../../libs/rest/middleware/private-route.middleware.js';
+import { StatusCodes } from 'http-status-codes';
 
 
 @injectable()
@@ -35,7 +37,9 @@ export default class CommentController extends BaseController {
       method: HttpMethod.Post,
       handler: this.create,
       middlewares: [
+        new PrivateRouteMiddleware(),
         new ValidateObjectIdMiddleware('offerId'),
+        new ValidateDtoMiddleware(CreateCommentDto),
         new DocumentExistsMiddleware(this.offerService, 'Offer', 'offerId')
       ]});
   }
@@ -48,10 +52,20 @@ export default class CommentController extends BaseController {
   }
 
 
-  public async create({body, params, headers}: CreateCommentRequest, res: Response): Promise<void> {
+  public async create(req: CreateCommentRequest, res: Response): Promise<void> {
+    const {body, params} = req;
     const offerId = String((params as OfferIdParam).offerId).trim();
 
-    const userId = getUserId(headers, 'CommentController');
+    const userId = getUserId(req, 'CommentController');
+
+    if(! await this.offerService.exists(offerId)) {
+      throw new HttpError(
+        StatusCodes.NOT_FOUND,
+        `Offer with id ${offerId} not found`,
+        'CommentController'
+      );
+    }
+
     const result = await this.commentService.create({
       ...body,
       offerId: offerId,

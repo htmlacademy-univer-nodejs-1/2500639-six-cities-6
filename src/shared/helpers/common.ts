@@ -1,7 +1,7 @@
 import { ClassConstructor, plainToInstance } from 'class-transformer';
-import { IncomingHttpHeaders } from 'node:http';
 import { HttpError } from '../libs/rest/index.js';
 import { StatusCodes } from 'http-status-codes';
+import type { RequestWithTokenPayload } from '../modules/auth/index.js';
 
 export function generateRandomValue(min: number, max: number, numAfterDigit = 0): number {
   return +((Math.random() * (max - min)) + min).toFixed(numAfterDigit);
@@ -31,11 +31,10 @@ export function createErrorObject(message: string) {
   };
 }
 
-export function getUserId(headers: IncomingHttpHeaders, controllerName: string): string {
-  const userId = headers['x-user-id'];
-  const value = Array.isArray(userId) ? userId[0] : userId;
+export function getUserId(req: unknown, controllerName: string): string {
+  const userId = (req as RequestWithTokenPayload | null | undefined)?.tokenPayload?.id;
 
-  if (!value) {
+  if (!userId) {
     throw new HttpError(
       StatusCodes.UNAUTHORIZED,
       'Unauthorized user',
@@ -43,5 +42,5 @@ export function getUserId(headers: IncomingHttpHeaders, controllerName: string):
     );
   }
 
-  return value;
+  return userId;
 }

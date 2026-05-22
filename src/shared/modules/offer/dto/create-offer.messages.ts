@@ -67,10 +67,6 @@ export const OfferValidationMessage = {
     invalidFormat: 'conveniences must be one or more of Conveniences: Breakfast, Air conditioning, Laptop friendly workspace, Baby seat, Washer, Towels, Fridge',
   },
 
-  authorId: {
-    invalidId: 'authorId field must be a valid id'
-  },
-
   commentCount: {
     invalidFormat: 'commentCount must be a non-negative integer'
   },
