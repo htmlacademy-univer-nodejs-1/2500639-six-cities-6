@@ -18,4 +18,6 @@ export const Component = {
   UserController: Symbol.for('UserController'),
   CommentController: Symbol.for('CommentController'),
   ExceptionFilter: Symbol.for('ExceptionFilter'),
+  AuthExceptionFilter: Symbol.for('AuthExceptionFilter'),
+  AuthService: Symbol.for('AuthService'),
 } as const;

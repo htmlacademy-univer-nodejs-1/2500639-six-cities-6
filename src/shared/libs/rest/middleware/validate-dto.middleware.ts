@@ -9,7 +9,10 @@ export class ValidateDtoMiddleware implements Middleware {
 
   public async execute({body}: Request, res: Response, next: NextFunction): Promise<void> {
     const dtoInstans = plainToInstance(this.dto, body);
-    const errors = await validate(dtoInstans);
+    const errors = await validate(dtoInstans, {
+      whitelist: true,
+      forbidNonWhitelisted: true
+    });
 
     if (errors.length > 0) {
       res.status(StatusCodes.BAD_REQUEST).send(errors);

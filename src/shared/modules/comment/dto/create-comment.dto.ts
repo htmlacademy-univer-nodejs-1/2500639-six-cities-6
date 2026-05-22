@@ -11,7 +11,7 @@ export class CreateCommentDto {
   @Max(5, {message: CreateCommentMessages.rating.rangeField})
   public rating!: number;
 
-  public offerId!: string;
+  public offerId: string;
 
-  public authorId!: string;
+  public authorId: string;
 }

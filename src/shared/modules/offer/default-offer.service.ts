@@ -47,18 +47,60 @@ export class DefaultOfferService implements OfferService {
   }
 
   public async findFavorites(userId: string): Promise<DocumentType<OfferEntity>[]> {
-    const favoriteOffers = await this.offerModel.find({favoriteByUsers: userId}).populate('authorId').exec();
+    const favoriteOffers = await this.offerModel.find({favoriteByUsers: userId}).populate('authorId').sort({ createdAt: Sort.Desc}).exec();
     return favoriteOffers;
   }
 
   public async addToFavorite(offerId: string, userId: string): Promise<void> {
-    await this.offerModel.updateOne({_id: offerId}, {$addToSet: {favoriteByUsers: userId}}).exec();
-    await this.userModel.updateOne({_id: userId}, {$addToSet: {favoriteOffers: offerId}}).exec();
+    const session = await this.offerModel.db.startSession();
+
+    try {
+      await session.withTransaction(async () => {
+        await this.offerModel
+          .updateOne({ _id: offerId }, { $addToSet: { favoriteByUsers: userId } }, { session })
+          .exec();
+        await this.userModel
+          .updateOne({ _id: userId }, { $addToSet: { favoriteOffers: offerId } }, { session })
+          .exec();
+      });
+    } catch {
+      await this.offerModel.updateOne({ _id: offerId }, { $addToSet: { favoriteByUsers: userId } }).exec();
+
+      try {
+        await this.userModel.updateOne({ _id: userId }, { $addToSet: { favoriteOffers: offerId } }).exec();
+      } catch (error) {
+        await this.offerModel.updateOne({ _id: offerId }, { $pull: { favoriteByUsers: userId } }).exec();
+        throw error;
+      }
+    } finally {
+      await session.endSession();
+    }
   }
 
   public async deleteFromFavorite(offerId: string, userId: string): Promise<void> {
-    await this.offerModel.updateOne({_id: offerId}, {$pull: {favoriteByUsers: userId}}).exec();
-    await this.userModel.updateOne({_id: userId}, {$pull: {favoriteOffers: offerId}}).exec();
+    const session = await this.offerModel.db.startSession();
+
+    try {
+      await session.withTransaction(async () => {
+        await this.offerModel
+          .updateOne({ _id: offerId }, { $pull: { favoriteByUsers: userId } }, { session })
+          .exec();
+        await this.userModel
+          .updateOne({ _id: userId }, { $pull: { favoriteOffers: offerId } }, { session })
+          .exec();
+      });
+    } catch {
+      await this.offerModel.updateOne({ _id: offerId }, { $pull: { favoriteByUsers: userId } }).exec();
+
+      try {
+        await this.userModel.updateOne({ _id: userId }, { $pull: { favoriteOffers: offerId } }).exec();
+      } catch (error) {
+        await this.offerModel.updateOne({ _id: offerId }, { $addToSet: { favoriteByUsers: userId } }).exec();
+        throw error;
+      }
+    } finally {
+      await session.endSession();
+    }
   }
 
   public async recalcRating(offerId: string): Promise<void> {

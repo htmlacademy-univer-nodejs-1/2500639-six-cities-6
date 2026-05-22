@@ -4,9 +4,9 @@ import { Types } from 'mongoose';
 import { StatusCodes } from 'http-status-codes';
 
 export class ValidateObjectIdMiddleware implements Middleware {
-  constructor(private param: string) {}
+  constructor(private readonly param: string) {}
 
-  public execute({ params }: Request, _res: Response, next: NextFunction): void {
+  public async execute({ params }: Request, _res: Response, next: NextFunction): Promise<void> {
     const paramValue = params[this.param];
     const objectId = Array.isArray(paramValue) ? paramValue[0] : paramValue;
 
