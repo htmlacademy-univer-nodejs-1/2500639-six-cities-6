@@ -3,7 +3,7 @@ import { CityRdo } from './offer.rdo.js';
 
 export class OfferPreviewRdo {
   @Expose()
-  public id!: number;
+  public id!: string;
 
   @Expose()
   public title!: string;
@@ -20,6 +20,9 @@ export class OfferPreviewRdo {
 
   @Expose()
   public isFavourites!: boolean;
+
+  @Expose()
+  public isFavorite!: boolean;
 
   @Expose()
   public rating!: number;

@@ -29,7 +29,7 @@ paths:
       requestBody:
         description: Информация для создания нового пользователя.
         content:
-          applcation/json:
+          application/json:
             schema:
               $ref: '#/components/schemas/registerUserRequest'
         required: true
@@ -276,7 +276,7 @@ paths:
         '200':
           description: Детальная информация о предложении
           content:
-            applicaton/json:
+            application/json:
               schema:
                 $ref: '#/components/schemas/offer'
         '404':
@@ -470,7 +470,7 @@ components:
         Baby seat,
         Washer,
         Towels,
-        Fridge,
+        Fridge
       ]
 
     rating:
@@ -549,7 +549,7 @@ components:
     offer:
       type: object
       required: [
-        id, title, description, city, rentalPrice, isPremium, isFavourites, reting, type, images
+        id, title, description, city, rentalPrice, isPremium, isFavourites, rating, type, images
       ]
       properties:
         id:
@@ -615,7 +615,7 @@ components:
     createOfferRequest:
       type: object
       required: [
-        title, description, city, rentalPrice, isPremium, type, images, countRoom, countGuest, conveniences, locetions
+        title, description, city, rentalPrice, isPremium, type, images, countRoom, countGuest, conveniences, locations
       ]
       properties:
         title:

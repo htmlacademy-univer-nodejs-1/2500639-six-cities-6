@@ -37,9 +37,9 @@ export class TSVOfferGenerator implements OfferGenerator{
       .sort(() => Math.random() - 0.5)
       .slice(0, conveniencesCount)
       .join(',');
-    const authorName = getRandomItem<string>(this.mockData.authorsName);
+    const authorName = getRandomItem<string>(this.mockData.authors);
     const authorEmail = getRandomItem<string>(this.mockData.emails);
-    const authorAvatarPath = getRandomItem<string>(this.mockData.avatarsPath);
+    const authorAvatarPath = getRandomItem<string>(this.mockData.avatarPath);
     const authorPassword = generator.generate({ length: 10, numbers: true });
     const authorType = getRandomItem<string>(Object.keys(UserType));
     const commentsCount = generateRandomValue(0, 100);

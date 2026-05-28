@@ -39,15 +39,15 @@ export class DefaultOfferService implements OfferService {
   }
 
   public async findAll(limit = DEFAULT_COUNT_OFFER): Promise<DocumentType<OfferEntity>[]> {
-    return this.offerModel.find({}).populate('authorId').sort({ createdAt: Sort.Desc}).limit(limit).exec();
+    return this.offerModel.find({}).populate('authorId').sort({ datePublication: Sort.Desc}).limit(limit).exec();
   }
 
   public async findPremiumByCity(cityName: string): Promise<DocumentType<OfferEntity>[]> {
-    return this.offerModel.find({'city': cityName, isPremium: true}).populate('authorId').sort({createdAt: Sort.Desc}).limit(DEFAULT_COUNT_PREMIUM_OFFER).exec();
+    return this.offerModel.find({'city': cityName, isPremium: true}).populate('authorId').sort({datePublication: Sort.Desc}).limit(DEFAULT_COUNT_PREMIUM_OFFER).exec();
   }
 
   public async findFavorites(userId: string): Promise<DocumentType<OfferEntity>[]> {
-    const favoriteOffers = await this.offerModel.find({favoriteByUsers: userId}).populate('authorId').sort({ createdAt: Sort.Desc}).exec();
+    const favoriteOffers = await this.offerModel.find({favoriteByUsers: userId}).populate('authorId').sort({ datePublication: Sort.Desc}).exec();
     return favoriteOffers;
   }
 

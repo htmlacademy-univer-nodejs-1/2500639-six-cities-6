@@ -1,4 +1,4 @@
-import { ArrayMaxSize, ArrayMinSize, IsArray, IsBoolean, IsDateString, IsEnum, IsInt, IsNumber, IsString, Max, MaxLength, Min, MinLength, ValidateNested } from 'class-validator';
+import { ArrayMaxSize, ArrayMinSize, IsArray, IsBoolean, IsDateString, IsDefined, IsEnum, IsInt, IsNotEmpty, IsNumber, IsObject, IsString, Max, MaxLength, Min, MinLength, ValidateNested } from 'class-validator';
 import { CityName, Conveniences, Location, OfferType } from '../../../types/index.js';
 import { OfferValidationMessage } from './create-offer.messages.js';
 import { Type } from 'class-transformer';
@@ -22,6 +22,7 @@ export class CreateOfferDto {
   @IsEnum(CityName, {message: OfferValidationMessage.city.invalidFormat})
   public city!: string;
 
+  @IsNotEmpty({message: OfferValidationMessage.previewPath.invalidFormat})
   @IsString({message: OfferValidationMessage.previewPath.invalidFormat})
   public previewPath!: string;
 
@@ -57,17 +58,15 @@ export class CreateOfferDto {
   @IsInt({message: OfferValidationMessage.rentalPrice.invalidFormat})
   public rentalPrice!: number;
 
-  @IsEnum(Conveniences, {message: OfferValidationMessage.conveniences.invalidFormat})
   @IsArray({message: OfferValidationMessage.conveniences.invalidFormat})
   @ArrayMinSize(1, {message: OfferValidationMessage.conveniences.invalidFormat})
+  @IsEnum(Conveniences, {each: true, message: OfferValidationMessage.conveniences.invalidFormat})
   public conveniences!: Conveniences[];
 
   public authorId: string;
 
-  @IsInt({message: OfferValidationMessage.commentCount.invalidFormat})
-  @Min(0, {message: OfferValidationMessage.commentCount.invalidFormat})
-  public commentCount: number;
-
+  @IsDefined({message: OfferValidationMessage.location.invalidFormat})
+  @IsObject({message: OfferValidationMessage.location.invalidFormat})
   @ValidateNested({message:OfferValidationMessage.location.invalidFormat})
   @Type(() => LocationDto)
   public location!: Location;

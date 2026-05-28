@@ -20,7 +20,7 @@ Content-Type: application/json
   "type": "apartment",
   "countRoom": 5,
   "countGuest": 7,
-  "rentalPrice": 60000,
+  "rentalPrice": 20000,
   "conveniences": [
     "Washer",
     "Towels"

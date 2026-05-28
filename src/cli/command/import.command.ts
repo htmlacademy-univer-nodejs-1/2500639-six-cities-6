@@ -103,7 +103,6 @@ export class ImportCommand implements Command{
       rentalPrice: offer.rentalPrice,
       conveniences: offer.conveniences,
       authorId: user.id,
-      commentCount: offer.commentCount,
       location: offer.location
     });
   }

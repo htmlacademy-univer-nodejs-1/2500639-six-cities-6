@@ -20,7 +20,7 @@ export class CityRdo {
 
 export class OfferRdo {
   @Expose()
-  public id!: number;
+  public id!: string;
 
   @Expose()
   public title!: string;
@@ -46,6 +46,9 @@ export class OfferRdo {
 
   @Expose()
   public isFavourites!: boolean;
+
+  @Expose()
+  public isFavorite!: boolean;
 
   @Expose()
   public rating!: number;
