@@ -18,6 +18,6 @@ export const CreateUserMessages = {
   },
 
   type: {
-    invalidFormat: 'type must be Ordinary or Pro'
+    invalidFormat: 'type must be ordinary or pro'
   }
 } as const;

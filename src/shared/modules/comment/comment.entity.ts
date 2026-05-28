@@ -14,7 +14,6 @@ export interface CommentEntity extends defaultClasses.Base{ }
 export class CommentEntity extends defaultClasses.TimeStamps {
   @prop({
     required: true,
-    default: '',
     trim: true,
     minlength: 5,
     maxlength: 1024,
@@ -25,7 +24,6 @@ export class CommentEntity extends defaultClasses.TimeStamps {
     required: true,
     min: 1,
     max: 5,
-    default: 0
   })
   public rating!: number;
 

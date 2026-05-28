@@ -52,6 +52,7 @@ export function prepareOffer(offer: DocumentType<OfferEntity>) {
   return {
     ...plain,
     id: String(offer._id),
+    commentCount: plain.commentsCount,
     city: {
       name: city.name,
       location: city.location
