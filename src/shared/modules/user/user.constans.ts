@@ -1,1 +1,1 @@
-export const DEFAULT_AVATAR_PATH = '/upload/default-avatar.jpg';
+export const DEFAULT_AVATAR_PATH = '/static/default-avatar.svg';
