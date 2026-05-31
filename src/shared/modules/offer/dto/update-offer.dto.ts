@@ -70,7 +70,6 @@ export class UpdateOfferDto{
   public rentalPrice?: number;
 
   @IsOptional()
-  @IsEnum(Conveniences, {message: OfferValidationMessage.conveniences.invalidFormat})
   @IsArray({message: OfferValidationMessage.conveniences.invalidFormat})
   @ArrayMinSize(1, {message: OfferValidationMessage.conveniences.invalidFormat})
   @IsEnum(Conveniences, {each: true, message: OfferValidationMessage.conveniences.invalidFormat})
